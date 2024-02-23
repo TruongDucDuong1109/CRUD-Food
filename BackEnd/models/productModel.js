@@ -17,11 +17,11 @@ var productSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: true,
+      
     },
     price: {
       type: Number,
-      required: true,
+      
     },
     category: {
       type: String,
@@ -61,7 +61,11 @@ var productSchema = new mongoose.Schema(
       type: String,
       default: 0,
     },
+    date: {
+      type: Date,
+    },
   },
+  
   
   { timestamps: true }
 );

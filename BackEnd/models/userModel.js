@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   isBlocked: { type: Boolean, default: false },
   cart: { type: Array, default: [] },
   address: { type: String },
+  brands: {type: Array, default: []},
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
   refreshToken: { type: String },
   passwordChangedAt: { type: Date },

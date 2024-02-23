@@ -1,9 +1,13 @@
-import CustomInput from "../components/CustomInput";
-import { Container } from "react-bootstrap";
+import { useState, useEffect } from "react";
+import { Container, Button } from "react-bootstrap";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { registerUser } from "../features/user/userSlice";
+import { getBrands } from "../features/brand/brandSlice";
+import { Select } from "antd";
+
+const { Option } = Select;
 
 const signUpSchema = yup.object({
   firstName: yup.string().required("First Name is required"),
@@ -13,7 +17,14 @@ const signUpSchema = yup.object({
 });
 
 const Signup = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const brandState = useSelector((state) => state.brand.brands);
+  const [selectedBrands, setSelectedBrands] = useState([]);
+
+  useEffect(() => {
+    dispatch(getBrands());
+  }, [dispatch]);
+
   const formik = useFormik({
     initialValues: {
       firstName: "",
@@ -23,9 +34,16 @@ const Signup = () => {
     },
     validationSchema: signUpSchema,
     onSubmit: (values) => {
-      dispatch(registerUser(values));
+      const userData = {...values, brands: selectedBrands}
+      console.log(userData);
+      dispatch(registerUser(userData));
+      formik.resetForm();
     },
   });
+
+  const handleBrandChange = (value) => {
+    setSelectedBrands(value);
+  };
 
   return (
     <>
@@ -39,60 +57,75 @@ const Signup = () => {
                 action=""
                 className="d-flex flex-column gap-15"
               >
-                <CustomInput
-                  type="text"
-                  label="First Name"
-                  name="firstName"
-                  val={formik.values.firstName}
-                  OnCh={formik.handleChange("firstName")}
-                />
-                <div className="error">
-                  {formik.touched.firstName &&
-                  formik.errors.firstName ? (
+                <div className="mb-3">
+                  <label className="form-label">First Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="First Name"
+                    {...formik.getFieldProps("firstName")}
+                  />
+                  {formik.touched.firstName && formik.errors.firstName && (
                     <div>{formik.errors.firstName}</div>
-                  ) : null}
-                </div>
-                <CustomInput
-                  type="text"
-                  label="Last Name"
-                  name="lastName"
-                  val={formik.values.lastName}
-                  OnCh={formik.handleChange("lastName")}
-                />
-                <div className="error">
-                  {formik.touched.lastName &&
-                  formik.errors.lastName ? (
-                    <div>{formik.errors.lastName}</div>
-                  ) : null}
-                </div>
-                
-                <CustomInput
-                  type="email"
-                  label="Email"
-                  name="email"
-                  val={formik.values.email}
-                  OnCh={formik.handleChange("email")}
-                />
-                <div className="error">
-                  {formik.touched.email &&
-                  formik.errors.email ? (
-                    <div>{formik.errors.email}</div>
-                  ) : null}
+                  )}
                 </div>
 
-                <CustomInput
-                  type="password"
-                  label="Password"
-                  name="password"
-                  val={formik.values.password}
-                  OnCh={formik.handleChange("password")}
-                />
-                 <div className="error">
-                  {formik.touched.password &&
-                  formik.errors.password ? (
-                    <div>{formik.errors.password}</div>
-                  ) : null}
+                <div className="mb-3">
+                  <label className="form-label">Last Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Last Name"
+                    {...formik.getFieldProps("lastName")}
+                  />
+                  {formik.touched.lastName && formik.errors.lastName && (
+                    <div>{formik.errors.lastName}</div>
+                  )}
                 </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Email</label>
+                  <input
+                    type="email"
+                    className="form-control"
+                    placeholder="Email"
+                    {...formik.getFieldProps("email")}
+                  />
+                  {formik.touched.email && formik.errors.email && (
+                    <div>{formik.errors.email}</div>
+                  )}
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    placeholder="Password"
+                    {...formik.getFieldProps("password")}
+                  />
+                  {formik.touched.password && formik.errors.password && (
+                    <div>{formik.errors.password}</div>
+                  )}
+                </div>
+
+                <div className="mb-3">
+                  <label className="form-label">Select Brands</label>
+                  <Select
+                    mode="multiple"
+                    allowClear
+                    style={{ width: "100%" }}
+                    placeholder="Select Brands"
+                    onChange={handleBrandChange}
+                  >
+                    {brandState.map((brand) => (
+                      <Option key={brand._id} value={brand.title}>
+                        {brand.title}
+                      </Option>
+                    ))}
+                  </Select>
+                </div>
+
                 <div className="text-end">
                   <button type="submit" className="btn btn-primary">
                     Sign Up

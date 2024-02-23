@@ -26,6 +26,8 @@ const {
   getAllOrders,
   getOrderByUserId,
   getProductTotalOrderedQuantity,
+  removeProductFromCart,
+  updateProductQuantityFromCart,
 } = require("../controller/userCtrl");
 const {
   authMiddleware,
@@ -38,6 +40,7 @@ router.post("/login", loginUserCtrl);
 router.post("/admin-login", loginAdminCtrl);
 
 router.post("/cart", authMiddleware, userCart);
+
 router.post("/cart/applycoupon", authMiddleware, applyCoupon);
 
 router.post("/forgot-password-token", forgotPasswordToken);
@@ -63,6 +66,17 @@ router.get("/logout", logout);
 router.get("/a-user/:id", authMiddleware, isAdmin, getSingleUser);
 
 router.delete("/empty-cart", authMiddleware, emptyCart);
+router.delete(
+  "/delete-product-cart/:cartItemId",
+  authMiddleware,
+  removeProductFromCart
+);
+router.put(
+  "/update-product-cart/:cartItemId/:newQuantity",
+  authMiddleware,
+  updateProductQuantityFromCart
+);
+
 router.delete("/delete/:id", deleteUser);
 router.put("/update", authMiddleware, updateUser);
 router.put("/save-address", authMiddleware, saveAddress);

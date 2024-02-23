@@ -1,11 +1,8 @@
-import axios from "axios";
-import { base_url } from "../../utils/axiosConfig";
+import axiosInstance from "../../utils/axiosConfig";
 
 const getProducts = async () => {
-  const respone = await axios.get(`${base_url}product`);
-  if (respone.data) {
-    return respone.data;
-  }
+  const response = await axiosInstance.get("/product");
+  return response.data;
 };
 
 export const productService = {
